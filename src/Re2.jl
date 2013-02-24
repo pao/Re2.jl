@@ -1,76 +1,40 @@
 module Re2
 
-module cre2 # low level interface
+export Regex2, match, @r2_str
 
-using StrPack
+import Base.show
+import Base.match
 
-libcre2 = dlopen(joinpath(Pkg.dir("Re2"), "deps/cre2-0.1b3/=build/src/.libs/libcre2.so"))
-macro cre2(fun)
-    :(dlsym(libcre2, $fun))
-end
+include("cre2.jl")
 
-const CRE2_VERSION = bytestring(ccall(@cre2(:cre2_version_string), Ptr{Uint8}, ()))
+type Regex2
+    pattern::ByteString
+    regex::Ptr{Void}
 
-macro optflag(optname)
-    fname = symbol("opt_set_"*optname)
-    fsym = "cre2_opt_set_"*optname
-    :(($(esc(fname)))(opt::Ptr{Void}, flag::Bool) = ccall(@cre2($fsym), Void, (Ptr{Void}, Int32), opt, flag?1:0))
-end
-
-@optflag "posix_syntax"
-@optflag "longest_match"
-@optflag "log_errors"
-@optflag "literal"
-@optflag "never_nl"
-@optflag "case_sensitive"
-@optflag "perl_classes"
-@optflag "word_boundary"
-@optflag "one_line"
-
-
-function new(pattern::String, options::Ptr{Void})
-    rex = ccall(@cre2(:cre2_new), Ptr{Void},
-                (Ptr{Uint8}, Int32, Ptr{Void}),
-                pattern, length(convert(Array{Uint8}, pattern)), options)
-    finalizer(rex, (r)->ccall(@cre2(:cre2_delete), Void, (Ptr{Void},), r))
-    errstr = bytestring(ccall(@cre2(:cre2_error_string), Ptr{Uint8}, (Ptr{Void},), rex))
-    if !isempty(errstr)
-        error(errstr)
+    function Regex2(pattern::String)
+        regex = cre2.new(pattern)
+        new(pattern, regex)
     end
-    rex
-end
-new(pattern::String) = new(pattern, opt_new())
-
-function opt_new()
-    opt = ccall(@cre2(:cre2_opt_new), Ptr{Void}, ())
-    finalizer(opt, (o)->ccall(@cre2(:cre2_opt_delete), Void, (Ptr{Void},), o))
-    opt_set_log_errors(opt, false)
-    opt
 end
 
-@struct type cre2_string_t
-    data::Ptr
-    length::Int32
+macro r2_str(pattern) Regex2(pattern) end
+
+function show(io::IO, re::Regex2)
+    print(io, "Regex2(", re.pattern, ")")
 end
 
-function match(rex::Ptr{Void}, text::String)
-    text_len = length(convert(Array{Uint8}, text))
-    nmatch = 1 + ccall(@cre2(:cre2_num_capturing_groups), Int32, (Ptr{Void},), rex)
-    matches = Array(Uint8, nmatch*(StrPack.calcsize(cre2_string_t)))
-    n = ccall(@cre2(:cre2_match), Int32,
-              (Ptr{Void}, Ptr{Uint8}, Int32, Int32, Int32, Int32, Ptr{Uint8}, Int32),
-              rex, text, text_len, 0, text_len, 1, matches, nmatch)
-    if n == 0
-        return false
-    end
-    true
-    ranges = Array(Int, nmatch*2)
-    ccall(@cre2(:cre2_strings_to_ranges), Void,
-          (Ptr{Uint8}, Ptr{Int}, Ptr{Uint8}, Int32),
-          text, ranges, matches, nmatch)
-    ranges
-end
+function match(re::Regex2, str::ByteString) #TODO: whatever idx does
+    m, n = cre2.match(re.regex, str)
 
+    # shamelessly copied from regex.jl's match
+    if isempty(m); return nothing; end
+    mat = str[m[1]+1:m[2]]
+    cap = Union(Nothing,ByteString)[
+            m[2i+1] < 0 ? nothing : str[m[2i+1]+1:m[2i+2]] for i=1:n ]
+    off = [ m[2i+1]::Int+1 for i=1:n ]
+    RegexMatch(mat, cap, m[1]+1, off)
 end
+match(r::Regex2, s::String) =
+    error("regex matching is only available for bytestrings; use bytestring(s) to convert")
 
 end

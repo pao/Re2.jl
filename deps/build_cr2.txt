@@ -1,0 +1,50 @@
+ 2212  CFLAGS+=" -I../../re2" LDFLAGS+=" -L../../re2/obj" ../configure
+ 2213  CFLAGS+=" -I../../re2" CXXFLAGS+=" -I../../re2" LDFLAGS+=" -L../../re2/obj" ../configure
+ 2214  CXXFLAGS+=" -I../../re2" LDFLAGS+=" -L../../re2/obj" ../configure
+ 2215  make
+ 2216  CFLAGS+=" -I../../re2" CXXFLAGS+=" -I../../re2" LDFLAGS+=" -L../../re2/obj" ../configure
+ 2217  make
+ 2218  CXXFLAGS+=" -I../../re2" LDFLAGS+=" -L../../re2/obj" ../configure
+ 2219  CXXFLAGS+=" -I../../re2" LDFLAGS+=" -L../../re2/obj" make
+ 2220  CFLAGS+=" -I../../re2" CXXFLAGS+=" -I../../re2" LDFLAGS+=" -L../../re2/obj" make
+ 2221  CXXFLAGS+=" -I./../../re2" LDFLAGS+=" -L./../../re2/obj" make
+ 2222  CXXFLAGS+=" -I~/.julia/Re2/deps/re2" LDFLAGS+=" -L~/.julia/Re2/deps/re2/obj" make
+ 2223  CXXFLAGS+=" -I~/.julia/Re2/deps/re2" LDFLAGS+=" -L~/.julia/Re2/deps/re2/obj" ../configure
+ 2224  CXXFLAGS+=" -I/home/patrick/.julia/Re2/deps/re2" LDFLAGS+=" -L/home/patrick/.julia/Re2/deps/re2/obj" ../configure
+ 2225  CXXFLAGS+=" -I/home/patrick/.julia/Re2/deps/re2" LDFLAGS+=" -L/home/patrick/.julia/Re2/deps/re2/obj" make
+ 2226  make CXXFLAGS+=" -I/home/patrick/.julia/Re2/deps/re2" LDFLAGS+=" -L/home/patrick/.julia/Re2/deps/re2/obj"
+ 2227  ls
+ 2228  ls tests/
+ 2229  cd tests
+ 2230  make
+ 2231  cd ..
+ 2232  ls
+ 2233  cd ..
+ 2234  ls
+ 2235  cd =build/
+ 2236  ls
+ 2237  ls doc
+ 2238  ls src/
+ 2239  ../configure --help
+ 2240  CXXFLAGS+=" -I/home/patrick/.julia/Re2/deps/re2" LDFLAGS+=" -L/home/patrick/.julia/Re2/deps/re2/obj" ../configure --enable-shared
+ 2241  make -j6 CXXFLAGS+=" -I/home/patrick/.julia/Re2/deps/re2" LDFLAGS+=" -L/home/patrick/.julia/Re2/deps/re2/obj"
+ 2242  make clean
+ 2243  make -j6 CXXFLAGS+=" -I/home/patrick/.julia/Re2/deps/re2" LDFLAGS+=" -L/home/patrick/.julia/Re2/deps/re2/obj"
+ 2244  ls src/
+ 2245  cd ..
+ 2246  ls
+ 2247  cd =`
+ 2248  cd =build/
+ 2249  ls -a
+ 2250  cd ..
+ 2251  find . -name libcre2
+ 2252  find . -name lib
+ 2253  find . -name cre2
+ 2254  find . -name *cre2*
+ 2255  cd =build/
+ 2256  src/.libs/
+ 2257  cd src/.libs/
+ 2258  ls -la
+ 2259  cd ../../../..
+ 2260  history
+ 2261  history | tail -50 > build_cr2.txt
